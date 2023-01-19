@@ -11,6 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApi.Middlewares;
+using WebApi.Securities.Context;
 
 namespace WebApi
 {
@@ -32,6 +34,10 @@ namespace WebApi
 			{
 				c.SwaggerDoc("v1", new OpenApiInfo { Title = "WebApi", Version = "v1" });
 			});
+
+			services.AddTransient<IIdentityContextBuilder, IdentityContextBuilder>();
+
+			services.AddHttpClient();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,8 +46,8 @@ namespace WebApi
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
-				//app.UseSwagger();
-				//app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
+				app.UseSwagger();
+				app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebApi v1"));
 			}
 
 			app.UseHttpsRedirection();
@@ -49,6 +55,8 @@ namespace WebApi
 			app.UseRouting();
 
 			app.UseAuthorization();
+
+			app.UseIdentityContext();
 
 			app.UseEndpoints(endpoints =>
 			{
